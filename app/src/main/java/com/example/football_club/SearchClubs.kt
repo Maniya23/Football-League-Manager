@@ -108,7 +108,7 @@ fun SearchClubs(
 
 @Composable
 fun ViewClub(club: Clubs){
-//    val jersey =
+
     Column {
         club.Name?.let { Text(text = "Name of Club : $it") }
         club.strLeague?.let { Text(text = "Name of League : $it") }

@@ -32,19 +32,7 @@ import androidx.room.Room
 fun HomeScreen(
     modifier: Modifier = Modifier,
     navController: NavController,
-//    onDbInitialize: (AppDatabase)->Unit
 ) {
-
-//    val context = LocalContext.current;
-//    val db = remember {
-//        Room.databaseBuilder(
-//            context,
-//            AppDatabase::class.java,
-//            "football_club"
-//        ).build()
-//    }
-//    onDbInitialize(db);
-
     // Start of display
     Column(
         modifier = Modifier

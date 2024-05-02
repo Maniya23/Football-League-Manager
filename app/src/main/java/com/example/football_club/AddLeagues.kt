@@ -1,6 +1,7 @@
 package com.example.football_club
 
 
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -18,13 +19,10 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
-import androidx.navigation.compose.rememberNavController
 import androidx.room.Room
-import androidx.room.RoomDatabase
 import org.json.JSONObject
 
 
@@ -35,7 +33,7 @@ fun AddLeagues(
 //    db: AppDatabase,
 ) {
 
-    val tickimg = painterResource(id = R.drawable.greentick);
+    val tickImg = painterResource(id = R.drawable.greentick);
     val leaguesData = readJsonLeagues(LocalContext.current);
 
     val db = Room.databaseBuilder(
@@ -70,7 +68,7 @@ fun AddLeagues(
         Spacer(modifier = Modifier.height(20.dp));
         Image(
             modifier = Modifier.fillMaxWidth(),
-            painter = tickimg, contentDescription = null
+            painter = tickImg, contentDescription = null
         );
 
         Spacer(modifier = Modifier.height(20.dp));
@@ -86,17 +84,22 @@ fun AddLeagues(
 // Read Json file of football leagues
 fun readJsonLeagues(context: android.content.Context): List<League> {
     val leagues = mutableListOf<League>();
-    val jsonString = context.resources.openRawResource(R.raw.football_leagues).bufferedReader().use { it.readText() }
-    val json = JSONObject(jsonString);
-    val leaguesArray = json.getJSONArray("leagues");
 
-    for (i in 0 until leaguesArray.length()) {
-        val leagueObj = leaguesArray.getJSONObject(i);
-        val idLeague = leagueObj.getInt("idLeague");
-        val strLeague = leagueObj.getString("strLeague")
-        val strSport = leagueObj.getString("strSport");
-        val strLeagueAlternate = leagueObj.getString("strLeagueAlternate");
-        leagues.add(League(idLeague, strLeague, strSport, strLeagueAlternate));
+    try {
+        val jsonString = context.resources.openRawResource(R.raw.football_leagues).bufferedReader().use { it.readText() }
+        val json = JSONObject(jsonString);
+        val leaguesArray = json.getJSONArray("leagues");
+
+        for (i in 0 until leaguesArray.length()) {
+            val leagueObj = leaguesArray.getJSONObject(i);
+            val idLeague = leagueObj.getInt("idLeague");
+            val strLeague = leagueObj.getString("strLeague")
+            val strSport = leagueObj.getString("strSport");
+            val strLeagueAlternate = leagueObj.getString("strLeagueAlternate");
+            leagues.add(League(idLeague, strLeague, strSport, strLeagueAlternate));
+        }
+    } catch (e:Exception) {
+        Log.d("Error","Error occurred while reading JSON file.")
     }
     return leagues
 }

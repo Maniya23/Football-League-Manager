@@ -115,6 +115,7 @@ fun SearchClubByLeague(
                 items(clubsList.size){ index ->
                     Text(text = toString(clubsList[index]))
                 }
+
             }
         }
 
@@ -124,7 +125,7 @@ fun SearchClubByLeague(
                 text = { Text(
                     text = "Successfully saved clubs to database!",
                     style = TextStyle(
-                        fontSize = 12.sp,
+                        fontSize = 16.sp,
                         fontWeight = FontWeight(600),
                         color = Color.Green
                     ),
@@ -143,40 +144,60 @@ fun SearchClubByLeague(
 // function to retrieve clubs in a league
 suspend fun searchClubsInLeague(leagueName: String): List<Clubs>{
     val clubsList = mutableListOf<Clubs>()
-    val urlString = "https://www.thesportsdb.com/api/v1/json/3/search_all_teams.php?l=$leagueName"
-    val url = URL(urlString)
-    val con: HttpURLConnection = url.openConnection() as HttpURLConnection
 
-//    Log.d("SearchClubs", "Hello")
-    withContext(Dispatchers.IO){
-        con.requestMethod = "GET"
-        val jsonClubsResponse = con.inputStream.bufferedReader().use { it.readText() }
-        val jsonClubs = JSONObject(jsonClubsResponse)
-//        Log.d("SearchClubs", "Hello2")
-        val clubsArray = jsonClubs.getJSONArray("teams")
+    try {
+        val urlString = "https://www.thesportsdb.com/api/v1/json/3/search_all_teams.php?l=$leagueName"
+        val url = URL(urlString)
+        val con: HttpURLConnection = url.openConnection() as HttpURLConnection
 
-        for (i in 0 until clubsArray.length()){
-            val clubObj = clubsArray.getJSONObject(i)
-            val idTeam = clubObj.getInt("idTeam")
-            val name = clubObj.getString("strTeam")
-            val strTeamShort = clubObj.getString("strTeamShort")
-            val strAlternate = clubObj.getString("strAlternate")
-            val intFormedYear = clubObj.getInt("intFormedYear")
-            val strLeague = clubObj.getString("strLeague")
-            val idLeague = clubObj.getInt("idLeague")
-            val strStadium = clubObj.getString("strStadium")
-            val strKeywords =  clubObj.getString("strKeywords")
-            val strStadiumThumb = clubObj.getString("strStadiumThumb")
-            val strStadiumLocation = clubObj.getString("strStadiumLocation")
-            val intStadiumCapacity = clubObj.getInt("intStadiumCapacity")
-            val strWebsite = clubObj.getString("strWebsite")
-            val strTeamJersey = clubObj.getString("strTeamJersey")
-            val strTeamLogo = clubObj.getString("strTeamLogo")
+        withContext(Dispatchers.IO) {
+            con.requestMethod = "GET"
+            val jsonClubsResponse = con.inputStream.bufferedReader().use { it.readText() }
+            val jsonClubs = JSONObject(jsonClubsResponse)
+            val clubsArray = jsonClubs.getJSONArray("teams")
 
-            clubsList.add(Clubs
-                (idTeam, name, strTeamShort, strAlternate, intFormedYear, strLeague, idLeague, strStadium, strKeywords, strStadiumThumb, strStadiumLocation, intStadiumCapacity, strWebsite, strTeamJersey, strTeamLogo)
-            )
+            for (i in 0 until clubsArray.length()) {
+                val clubObj = clubsArray.getJSONObject(i)
+                val idTeam = clubObj.getInt("idTeam")
+                val name = clubObj.getString("strTeam")
+                val strTeamShort = clubObj.getString("strTeamShort")
+                val strAlternate = clubObj.getString("strAlternate")
+                val intFormedYear = clubObj.getInt("intFormedYear")
+                val strLeague = clubObj.getString("strLeague")
+                val idLeague = clubObj.getInt("idLeague")
+                val strStadium = clubObj.getString("strStadium")
+                val strKeywords = clubObj.getString("strKeywords")
+                val strStadiumThumb = clubObj.getString("strStadiumThumb")
+                val strStadiumLocation = clubObj.getString("strStadiumLocation")
+                val intStadiumCapacity = clubObj.getInt("intStadiumCapacity")
+                val strWebsite = clubObj.getString("strWebsite")
+                val strTeamJersey = clubObj.getString("strTeamJersey")
+                val strTeamLogo = clubObj.getString("strTeamLogo")
+
+                clubsList.add(
+                    Clubs
+                        (
+                        idTeam,
+                        name,
+                        strTeamShort,
+                        strAlternate,
+                        intFormedYear,
+                        strLeague,
+                        idLeague,
+                        strStadium,
+                        strKeywords,
+                        strStadiumThumb,
+                        strStadiumLocation,
+                        intStadiumCapacity,
+                        strWebsite,
+                        strTeamJersey,
+                        strTeamLogo
+                    )
+                )
+            }
         }
+    } catch (e: Exception) {
+        e.printStackTrace()
     }
     return clubsList
 }
