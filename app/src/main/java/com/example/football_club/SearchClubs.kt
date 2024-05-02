@@ -78,7 +78,6 @@ fun SearchClubs(
                     scope.launch {
                         withContext(Dispatchers.IO) {
                             // Search for club
-                            Log.d("Club", "Searching for club: $clubName")
                             clubs = clubsDao.searchClubsByName(clubName).toMutableList()
                             showClubs = true
                         }
