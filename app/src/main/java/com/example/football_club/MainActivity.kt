@@ -15,38 +15,39 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         setContent {
             val navController = rememberNavController()
-//            val db = Room.databaseBuilder(
-//                applicationContext,
-//                AppDatabase::class.java,
-//                "football_club"
-//            ).build()
-
-            fun initializeDb(){}
 
             //App Navigation
+            // Home screen (Default Screen)
             NavHost(navController = navController, startDestination = "HomeScreen") {
                 composable("HomeScreen") { HomeScreen(
                     modifier = Modifier,
                     navController,)
                 }
 
+                // Add Leagues screen
                 composable("AddLeagues") {
                     AddLeagues(
                         modifier = Modifier,
                         navController,
                     )
                 }
+
+                // Search Club by League screen
                 composable("SearchClubByLeague") {
                     SearchClubByLeague(
                         modifier = Modifier,
 
                     )
                 }
+
+                // Search Clubs screen
                 composable("SearchClubs") {
                     SearchClubs(
                         modifier = Modifier,
                     )
                 }
+
+                // Search All Clubs screen (Additional button)
                 composable("SearchAllClubs") {
                     SearchAllClubs(
                         modifier = Modifier,

@@ -5,6 +5,7 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 
+// Define the LeagueDAO interface
 @Dao
 interface LeagueDAO {
     // Add Leagues to DB
@@ -17,12 +18,4 @@ interface LeagueDAO {
 
     @Query("SELECT * FROM leagues WHERE strLeague LIKE '%' || :name || '%'")
     suspend fun searchLeaguesByName(name: String): List<League>
-
-//        // Get League by ID
-//        @Query("SELECT * FROM leagues WHERE idLeague = :id")
-//        fun getLeagueById(id: String): LiveData<League>
-//
-//        // Search Leagues by Name
-//        @Query("SELECT * FROM leagues WHERE strLeague LIKE '%' || :name || '%'")
-//        fun searchLeaguesByName(name: String): LiveData<List<League>>
 }

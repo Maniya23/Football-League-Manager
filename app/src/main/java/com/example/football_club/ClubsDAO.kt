@@ -5,6 +5,7 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 
+// Define the ClubsDAO interface
 @Dao
 interface ClubsDAO {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
@@ -15,7 +16,4 @@ interface ClubsDAO {
 
     @Query("SELECT Name,strLeague,strTeamLogo From leagueClubs WHERE name LIKE '%' || :name || '%' or strLeague LIKE '%' || :name || '%'")
     fun searchClubsByName(name: String): List<Clubs>
-//
-//    @Query("SELECT * FROM leagueClubs WHERE name LIKE '%' || :name || '%'")
-//    fun searchClubsByName(name: String): List<Clubs>
 }

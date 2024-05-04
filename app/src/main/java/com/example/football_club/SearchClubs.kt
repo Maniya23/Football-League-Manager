@@ -1,5 +1,6 @@
 package com.example.football_club
 
+import android.content.res.Configuration
 import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
@@ -28,11 +29,16 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.room.Room
 import coil.compose.AsyncImage
 import kotlinx.coroutines.Dispatchers
@@ -43,61 +49,126 @@ import kotlinx.coroutines.withContext
 fun SearchClubs(
     modifier: Modifier,
 ) {
+    // Capture and store screen orientation
+    val configuration = LocalConfiguration.current
+    val isPortrait = configuration.orientation == Configuration.ORIENTATION_PORTRAIT
+
+    // Database instance
     val db = Room.databaseBuilder(
         LocalContext.current,
         AppDatabase::class.java,
         "football_league"
     ).build()
     val clubsDao = db.clubsDao()
+
+    // Coroutine scope
     val scope = rememberCoroutineScope()
+
+    // Elements
     var clubName by remember { mutableStateOf("") }
     var clubs by remember { mutableStateOf(listOf<Clubs>()) }
     var showClubs by remember { mutableStateOf(false) }
 
-    // Search Clubs
-    Column (
-        modifier = modifier
-            .fillMaxWidth()
-            .padding(20.dp),
-    )
-    {
-        Row {
-            TextField(
-                value = clubName,
-                onValueChange = { clubName = it.lowercase() },
-                label = { Text("Enter the club name:") },
-                modifier = Modifier,
-                enabled = true,
-            )
-            Spacer(modifier = Modifier.width(10.dp))
-            Button(
-                shape = CircleShape,
-                modifier = Modifier.size(40.dp),
-                contentPadding = PaddingValues(0.dp),
-                onClick = {
-                    scope.launch {
-                        withContext(Dispatchers.IO) {
-                            // Search for club
-                            clubs = clubsDao.searchClubsByName(clubName).toMutableList()
-                            showClubs = true
+    // If the screen is in portrait mode
+    if (isPortrait){
+        Column (
+            modifier = modifier
+                .fillMaxWidth()
+                .padding(20.dp),
+        )
+        {
+            Row {
+                TextField(
+                    value = clubName,
+                    onValueChange = { clubName = it.lowercase() },
+                    label = { Text("Enter the club name:") },
+                    modifier = Modifier,
+                    enabled = true,
+                )
+                Spacer(modifier = Modifier.width(10.dp))
+
+                Button(
+                    shape = CircleShape,
+                    modifier = Modifier.size(40.dp),
+                    contentPadding = PaddingValues(0.dp),
+                    onClick = {
+                        scope.launch {
+                            withContext(Dispatchers.IO) {
+                                // Search for club
+                                clubs = clubsDao.searchClubsByName(clubName).toMutableList()
+                                showClubs = true
+                            }
                         }
                     }
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.Search,
+                        contentDescription = "Search",
+                        modifier = Modifier.size(20.dp)
+                    )
                 }
-            ) {
-                // Inner content including an icon and a text label
-                Icon(
-                    imageVector = Icons.Default.Search,
-                    contentDescription = "Search",
-                    modifier = Modifier.size(20.dp)
-                )
+            }
+            Spacer(modifier = Modifier.height(20.dp))
+
+            // Display the clubs
+            if (showClubs) {
+                LazyColumn {
+                    items(clubs.size) { index ->
+                        ViewClub(clubs[index])
+                    }
+                }
             }
         }
+    }
+    // If the screen is in landscape mode
+    else {
+        Row (
+            modifier = modifier
+                .fillMaxWidth()
+                .padding(20.dp),
+        )
+        {
+            Column {
+                Row {
+                    TextField(
+                        value = clubName,
+                        onValueChange = { clubName = it.lowercase() },
+                        label = { Text("Enter the club name:") },
+                        modifier = Modifier,
+                        enabled = true,
+                    )
+                    Spacer(modifier = Modifier.width(10.dp))
 
-        Spacer(modifier = Modifier.height(20.dp))
-        if (showClubs) {
-            LazyColumn {
-                items(clubs.size) { index ->
-                    ViewClub(clubs[index])
+                    Button(
+                        shape = CircleShape,
+                        modifier = Modifier.size(40.dp),
+                        contentPadding = PaddingValues(0.dp),
+                        onClick = {
+                            scope.launch {
+                                withContext(Dispatchers.IO) {
+                                    // Search for club
+                                    clubs = clubsDao.searchClubsByName(clubName).toMutableList()
+                                    showClubs = true
+                                }
+                            }
+                        }
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.Search,
+                            contentDescription = "Search",
+                            modifier = Modifier.size(20.dp)
+                        )
+                    }
+                }
+            }
+            Spacer(modifier = Modifier.width(60.dp))
+
+            // Display the clubs
+            if (showClubs) {
+                LazyColumn {
+                    items(clubs.size) { index ->
+                        ViewClub(clubs[index])
+                    }
                 }
             }
         }
@@ -105,11 +176,14 @@ fun SearchClubs(
 }
 
 
+// Display the clubs and logos
 @Composable
 fun ViewClub(club: Clubs){
-
     Column {
-        club.Name?.let { Text(text = "Name of Club : $it") }
+        club.Name?.let { Text(
+            text = "Name of Club : $it",
+            style = TextStyle(fontSize = 20.sp, fontWeight = FontWeight(600)),
+        ) }
         club.strLeague?.let { Text(text = "Name of League : $it") }
         AsyncImage(
             model = club.strTeamLogo,

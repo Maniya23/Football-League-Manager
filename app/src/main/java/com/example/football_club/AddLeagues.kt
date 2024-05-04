@@ -1,6 +1,7 @@
 package com.example.football_club
 
 
+import android.content.res.Configuration
 import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
@@ -14,6 +15,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
@@ -31,10 +33,16 @@ fun AddLeagues(
     modifier: Modifier,
     navController: NavHostController,
 ) {
+    // Capture and store screen orientation
+    val configuration = LocalConfiguration.current
+    val isPortrait = configuration.orientation == Configuration.ORIENTATION_PORTRAIT
 
+    // Elements
+    val homeScreenButton = "Go back to home screen"
     val tickImg = painterResource(id = R.drawable.greentick)
-    val leaguesData = readJsonLeagues(LocalContext.current)
+    val leaguesData = readJsonLeagues(LocalContext.current) // Read JSON file
 
+    // Database instance
     val db = Room.databaseBuilder(
         LocalContext.current,
         AppDatabase::class.java,
@@ -47,48 +55,86 @@ fun AddLeagues(
         leagueDao.insertLeague(leaguesData)
     }
 
-    Column (
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(30.dp),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center
-    )
-    {
-        Text(
+    // If the screen is in portrait mode
+    if(isPortrait){
+        Column (
             modifier = Modifier
-                .fillMaxWidth(),
-
-            textAlign = TextAlign.Center,
-            style = TextStyle(fontSize = 20.sp, fontWeight = FontWeight(400)),
-            text = "The leagues on football_leagues.json have been added to the database successfully."
+                .fillMaxWidth()
+                .padding(30.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center
         )
+        {
+            Text(
+                modifier = Modifier
+                    .fillMaxWidth(),
 
-        Spacer(modifier = Modifier.height(20.dp))
-        Image(
-            modifier = Modifier.fillMaxWidth(),
-            painter = tickImg, contentDescription = null
-        )
+                textAlign = TextAlign.Center,
+                style = TextStyle(fontSize = 20.sp, fontWeight = FontWeight(400)),
+                text = "The leagues on football_leagues.json have been added to the database successfully."
+            )
 
-        Spacer(modifier = Modifier.height(20.dp))
-        AppButton(
-            label = "Go back to home screen",
-            onClick = { navController.navigate("HomeScreen"); },
-            enabled = true,
-            modifier = modifier
-        )
+            Spacer(modifier = Modifier.height(20.dp))
+            Image(
+                modifier = Modifier.fillMaxWidth(),
+                painter = tickImg, contentDescription = null
+            )
+
+            Spacer(modifier = Modifier.height(20.dp))
+            AppButton(
+                label = homeScreenButton,
+                onClick = { navController.navigate("HomeScreen"); },
+                enabled = true,
+                modifier = modifier
+            )
+        }
     }
+    // If the screen is in landscape mode
+    else
+        Column (
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(30.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center
+        )
+        {
+            Text(
+                modifier = Modifier
+                    .fillMaxWidth(),
+
+                textAlign = TextAlign.Center,
+                style = TextStyle(fontSize = 20.sp, fontWeight = FontWeight(400)),
+                text = "The leagues on football_leagues.json have been added to the database successfully."
+            )
+            Spacer(modifier = Modifier.height(20.dp))
+
+            Image(
+                modifier = Modifier.fillMaxWidth(),
+                painter = tickImg, contentDescription = null
+            )
+            Spacer(modifier = Modifier.height(20.dp))
+
+            AppButton(
+                label = homeScreenButton,
+                onClick = { navController.navigate("HomeScreen"); },
+                enabled = true,
+                modifier = modifier
+            )
+        }
 }
 
 // Read Json file of football leagues
 fun readJsonLeagues(context: android.content.Context): List<League> {
-    val leagues = mutableListOf<League>()
+    val leagues = mutableListOf<League>() // List of leagues
 
+    // Read JSON file
     try {
         val jsonString = context.resources.openRawResource(R.raw.football_leagues).bufferedReader().use { it.readText() }
         val json = JSONObject(jsonString)
         val leaguesArray = json.getJSONArray("leagues")
 
+        // Add leagues to list from JSON file
         for (i in 0 until leaguesArray.length()) {
             val leagueObj = leaguesArray.getJSONObject(i)
             val idLeague = leagueObj.getInt("idLeague")
@@ -109,15 +155,3 @@ fun readJsonLeagues(context: android.content.Context): List<League> {
     }
     return leagues
 }
-
-
-//@Preview
-//@Composable
-//fun AddLeaguesPreview() {
-//    val navController = rememberNavController()
-//    AddLeagues(
-//        modifier = Modifier,
-//        navController = navController,
-//        db = AppDatabase.getInstance(LocalContext.current)
-//    )
-//}

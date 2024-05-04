@@ -3,6 +3,7 @@ package com.example.football_club
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 
+// Define the Clubs data class
 @Entity(tableName = "leagueClubs")
 data class Clubs(
     @PrimaryKey
