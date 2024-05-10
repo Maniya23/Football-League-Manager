@@ -216,3 +216,9 @@ fun DisplayEquipment(equipmentData: List<Pair<String, List<String>>>) {
 fun PreviewSearchAllClubs(){
     SearchClubs(modifier = Modifier)
 }
+
+/*
+* References:
+* Gomez, O. D. L. H. (2023). How to load and display an image from a URL using Jetpack Compose and Kotlin. Delasign. Available from https://www.delasign.com/blog/android-studio-jetpack-compose-kotlin-image-from-url/ [Accessed 1 May 2024].
+* Patel, K. (2024). Handling Screen Orientation Changes in Jetpack Compose. LinkeIn. Available from https://www.linkedin.com/pulse/handling-screen-orientation-changes-jetpack-compose-kaleem-patel-iztuf/ [Accessed 4 May 2024].
+*/

@@ -337,3 +337,8 @@ fun PreviewSearchClubByLeague() {
         modifier = Modifier,
     )
 }
+
+/*
+* References:
+* Patel, K. (2024). Handling Screen Orientation Changes in Jetpack Compose. LinkeIn. Available from https://www.linkedin.com/pulse/handling-screen-orientation-changes-jetpack-compose-kaleem-patel-iztuf/ [Accessed 4 May 2024].
+*/
