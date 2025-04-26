@@ -1,4 +1,4 @@
-# Football Club
+# Football League Manager
 
 Football Club is an Android application built with Kotlin and Jetpack Compose. It allows users to search for football clubs, view club and league information, and manage football leagues using a local database. The app uses TheSportsDB API for live football club data and stores league data from a bundled JSON file.
 
